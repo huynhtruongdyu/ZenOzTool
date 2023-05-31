@@ -1,0 +1,59 @@
+﻿@page "/"
+
+@inject IGoldRateService _goldRateService
+
+<PageTitle>Index</PageTitle>
+
+<div class="row">
+    <div class="col-12 table-responsive">
+        <h3>@sjcGoldRateData.Title</h3>
+        <p>Updated at: @sjcGoldRateData.Updated | Unit: @sjcGoldRateData.Unit</p>
+        <table class="table table-borderless w-100">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">City</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Buy</th>
+                    <th scope="col">Sell</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var city in sjcGoldRateData.Cities)
+                {
+                    @if (city.Items.Count > 1)
+                    {
+                        @for (int i = 0; i < city.Items.Count; i++)
+                        {
+                            <tr>
+
+                                <th scope="row">@(i == 0 ? city.Name : "")</th>
+                                <td>@city.Items[i]?.Type</td>
+                                <td>@city.Items[i]?.Buy.ToString("#.000")</td>
+                                <td>@city.Items[i]?.Sell.ToString("#.000")</td>
+                            </tr>
+                        }
+
+                    }
+                    else
+                    {
+                        <tr>
+                            <th scope="row">@city.Name</th>
+                            <td>@city.Items.FirstOrDefault()?.Type</td>
+                            <td>@city.Items.FirstOrDefault()?.Buy.ToString("#.000")</td>
+                            <td>@city.Items.FirstOrDefault()?.Sell.ToString("#.000")</td>
+                        </tr>
+                    }
+
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@code {
+    private SjcGoldRateXML sjcGoldRateData;
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        sjcGoldRateData = _goldRateService.GetSJC();
+    }
+}
